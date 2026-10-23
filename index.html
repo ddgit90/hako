@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ja" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0c0f">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https: http:; media-src 'self' blob:; connect-src 'self' blob: https: http:; frame-src blob:; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'self'">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HAKO">
+<title>HAKO</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-512.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ロック画面 -->
+<div id="lock" class="lock">
+  <div class="lock-card">
+    <div class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></svg></div>
+    <h1>HAKO</h1>
+    <p class="muted" id="lockMsg">準備中…</p>
+    <form id="lockForm" autocomplete="on">
+      <input type="text" name="username" autocomplete="username" value="HAKO" class="vh" tabindex="-1" aria-hidden="true">
+      <input id="pw" class="field" type="password" name="password" autocomplete="current-password" placeholder="パスワード" required>
+      <input id="pw2" class="field" type="password" name="password2" autocomplete="new-password" placeholder="もう一度入力" hidden>
+      <button class="btn primary block" id="lockBtn" type="submit">開く</button>
+    </form>
+    <button class="btn ghost block" id="bioBtn" type="button" hidden style="margin-top:10px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 16a4 4 0 0 0 5 0"/></svg><span>Face IDで開く</span></button>
+    <button class="link" id="restoreFirst" type="button" hidden>別の端末のバックアップから復元する</button>
+    <p class="fine" id="lockNote"></p>
+  </div>
+</div>
+
+<!-- 本体 -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="top-row">
+      <h1 class="title" id="viewTitle">ライブラリ</h1>
+      <button class="pill" id="netPill" type="button"></button>
+      <button class="icon-btn" id="searchBtn" type="button" aria-label="検索"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="icon-btn" id="selectBtn" type="button" aria-label="選択"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m8 12 3 3 5-5.5"/></svg></button>
+      <button class="icon-btn" id="lockNow" type="button" aria-label="ロック"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></button>
+    </div>
+    <div class="search-row" id="searchRow" hidden><input id="q" class="field" type="search" placeholder="名前・メモ・タグで検索" autocomplete="off"></div>
+    <nav class="tabs" id="genreTabs"></nav>
+  </header>
+
+  <main id="main"></main>
+
+  <div id="selbar" class="selbar" hidden></div>
+
+  <div id="mini" class="mini" hidden>
+    <div class="mini-media" id="miniMedia">
+      <video id="pv" playsinline webkit-playsinline preload="auto"></video>
+      <img id="miniCover" alt="" hidden>
+      <svg class="ic mini-ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>
+    </div>
+    <div class="mini-info"><div class="mini-title" id="miniTitle"></div><div class="mini-bar"><i id="miniBar"></i></div></div>
+    <button class="icon-btn" id="miniPlay" type="button" aria-label="再生/一時停止"></button>
+    <button class="icon-btn" id="miniNext" type="button" aria-label="次へ"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6v12l9-6z" fill="currentColor"/><path d="M18 6v12"/></svg></button>
+    <button class="icon-btn" id="miniPip" type="button" aria-label="PiP"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12" y="12" width="7" height="5" rx="1" fill="currentColor"/></svg></button>
+    <button class="icon-btn" id="miniClose" type="button" aria-label="停止"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <audio id="pa" preload="auto"></audio>
+
+  <nav class="bottom" id="bottomNav">
+    <button data-view="lib" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span>ライブラリ</span></button>
+    <button data-view="sites" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg><span>サイト</span></button>
+    <button data-view="add" class="add" type="button" aria-label="追加"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button data-view="queue" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg><span>転送</span><b class="nbadge" id="qBadge" hidden>0</b></button>
+    <button data-view="settings" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg><span>設定</span></button>
+  </nav>
+</div>
+
+<div id="viewer" class="viewer" hidden></div>
+<div id="sheets"></div>
+<div id="hud" class="hud" hidden><div class="hud-text"></div><div class="bar"><i></i></div></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileIn" class="vh" tabindex="-1" aria-hidden="true">
+
+<script src="ui.js"></script>
+<script src="crypto.js"></script>
+<script src="db.js"></script>
+<script src="zip.js"></script>
+<script src="media.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

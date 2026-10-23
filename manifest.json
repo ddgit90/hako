@@ -1,0 +1,16 @@
+{
+  "name": "HAKO",
+  "short_name": "HAKO",
+  "description": "写真・動画・音声・サイトを暗号化してしまっておく自分専用の箱",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0c0c0f",
+  "theme_color": "#0c0c0f",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
